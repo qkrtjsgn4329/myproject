@@ -1,4 +1,6 @@
+cat > .github/workflows/build.yml <<'YAML'
 name: Build Kivy APK
+
 on:
   push:
     branches: [ "main" ]
@@ -15,12 +17,13 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Buildozer deps
+      - name: Install Buildozer deps (with Cython first)
         run: |
           sudo apt-get update
           sudo apt-get install -y libssl-dev libffi-dev zlib1g-dev openjdk-17-jdk python3-dev
           python -m pip install --upgrade pip
-          pip install "buildozer==1.5.0"
+          python -m pip install "Cython==0.29.36"
+          python -m pip install "buildozer==1.5.0"
 
       - name: Install Android cmdline-tools
         run: |
@@ -51,3 +54,4 @@ jobs:
         with:
           name: app-debug-apk
           path: bin/*.apk
+YAML
