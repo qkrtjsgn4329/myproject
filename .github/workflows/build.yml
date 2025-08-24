@@ -10,11 +10,10 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 60
 
-    # ANDROID SDK 경로와 PATH (sdkmanager / platform-tools 포함)
     env:
       ANDROID_HOME: ${{ github.workspace }}/android-sdk
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-      PATH: ${{ github.workspace }}/android-sdk/cmdline-tools/latest/bin:${{ github.workspace }}/android-sdk/platform-tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+      PATH: ${{ github.workspace }}/android-sdk/cmdline-tools/latest/bin:${{ github.workspace }}/android-sdk/platform-tools:${{ env.PATH }}
 
     steps:
       - name: Checkout
@@ -26,12 +25,12 @@ jobs:
           python-version: "3.11"
 
       - name: Install build deps (Python/Java)
-  run: |
-    sudo apt-get update
-    sudo apt-get install -y openjdk-17-jdk
-    java -version
-    python -m pip install --upgrade pip
-    pip install "cython==0.29.36" buildozer
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y openjdk-17-jdk
+          java -version
+          python -m pip install --upgrade pip
+          pip install cython==0.29.36 buildozer
 
       - name: Install Android cmdline-tools
         run: |
