@@ -11,9 +11,9 @@ jobs:
     timeout-minutes: 60
 
     env:
-      ANDROID_HOME: ${{ github.workspace }}/android-sdk
-      ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
-      PATH: ${{ github.workspace }}/android-sdk/cmdline-tools/latest/bin:${{ github.workspace }}/android-sdk/platform-tools:${{ env.PATH }}
+      ANDROID_HOME: android-sdk
+      ANDROID_SDK_ROOT: android-sdk
+      PATH: android-sdk/cmdline-tools/latest/bin:android-sdk/platform-tools:${{ env.PATH }}
 
     steps:
       - name: Checkout
