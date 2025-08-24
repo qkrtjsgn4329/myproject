@@ -58,7 +58,7 @@ log_level = 2
 android.minapi = 21
 
 # (str) Target API Level
-android.api = 29
+android.api = 34
 
 # (str) NDK API (for Cython 등)
 android.ndk_api = 21
