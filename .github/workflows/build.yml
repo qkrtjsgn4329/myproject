@@ -1,4 +1,3 @@
-cat > .github/workflows/build.yml <<'YAML'
 name: Build Kivy APK
 
 on:
@@ -17,13 +16,14 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install Buildozer deps (with Cython first)
+      - name: Install Buildozer deps
         run: |
           sudo apt-get update
-          sudo apt-get install -y libssl-dev libffi-dev zlib1g-dev openjdk-17-jdk python3-dev
+          sudo apt-get install -y libssl-dev libffi-dev python3-dev \
+            python3-pip openjdk-17-jdk unzip curl
           python -m pip install --upgrade pip
-          python -m pip install "Cython==0.29.36"
-          python -m pip install "buildozer==1.5.0"
+          pip install cython
+          pip install buildozer==1.5.0
 
       - name: Install Android cmdline-tools
         run: |
@@ -40,18 +40,16 @@ jobs:
       - name: Accept licenses & install SDK packages
         run: |
           yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "platforms;android-29" "build-tools;36.0.0"
+          sdkmanager "platform-tools" "platforms;android-31" "build-tools;31.0.0"
 
       - name: Build APK
         env:
           ANDROID_HOME: ${{ env.ANDROID_HOME }}
           ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
-        run: |
-          buildozer android debug
+        run: buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-debug-apk
           path: bin/*.apk
-YAML
