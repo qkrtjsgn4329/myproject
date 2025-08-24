@@ -9,7 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-22.04
     timeout-minutes: 60
-
     env:
       ANDROID_HOME: ${{ github.workspace }}/android-sdk
       ANDROID_SDK_ROOT: ${{ github.workspace }}/android-sdk
@@ -26,11 +25,9 @@ jobs:
       - name: Install build deps (Python/Java)
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk curl unzip
-          # Java 17을 기본 런타임으로 설정
-          sudo update-alternatives --install /usr/bin/java java /usr/lib/jvm/java-17-openjdk-amd64/bin/java 1
-          sudo update-alternatives --install /usr/bin/javac javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac 1
-          sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
+          sudo apt-get install -y openjdk-17-jdk zip unzip curl
+          # Java 17 기본 런타임 설정 (안전)
+          sudo update-alternatives --set java  /usr/lib/jvm/java-17-openjdk-amd64/bin/java
           sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
           java -version
           python -m pip install --upgrade pip
@@ -38,12 +35,16 @@ jobs:
 
       - name: Install Android cmdline-tools
         run: |
-          mkdir -p "$ANDROID_HOME/cmdline-tools"
-          cd "$ANDROID_HOME/cmdline-tools"
+          mkdir -p "$ANDROID_HOME"
+          cd "$ANDROID_HOME"
+          mkdir -p cmdline-tools
+          cd cmdline-tools
           curl -L -o cmdtools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
-          mkdir -p latest
-          unzip -q -o cmdtools.zip -d latest
+          unzip -q cmdtools.zip
           rm cmdtools.zip
+          # zip 내부에 또 'cmdline-tools/' 폴더가 있으므로 그걸 latest 로 배치
+          rm -rf latest
+          mv cmdline-tools latest
 
       - name: Add Android tools to PATH
         run: |
@@ -54,7 +55,7 @@ jobs:
       - name: Accept licenses & install SDK packages
         run: |
           yes | sdkmanager --licenses
-          sdkmanager "platform-tools" "build-tools;36.0.0" "platforms;android-34"
+          sdkmanager "platform-tools" "platforms;android-34" "build-tools;36.0.0"
 
       - name: Build APK
         env:
